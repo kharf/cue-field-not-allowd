@@ -6,7 +6,7 @@ name: vet
     pull_request:
         branches: [ "*" ]
 jobs:
-  diff:
+  vet:
     runs-on: ubuntu-latest
     strategy:
       matrix:
