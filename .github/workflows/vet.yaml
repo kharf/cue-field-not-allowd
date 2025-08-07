@@ -1,0 +1,30 @@
+name: vet
+"on":
+    workflow_dispatch:
+    push:
+        branches: [ main ]
+    pull_request:
+        branches: [ "*" ]
+jobs:
+  diff:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        eval:
+          - name: v2
+            command: CUE_EXPERIMENT=evalv3=0 cue vet ./infrastructure -c
+          - name: v3
+            command: cue vet ./infrastructure -c
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - name: Install CUE
+        uses: cue-lang/setup-cue@a93fa358375740cd8b0078f76355512b9208acb1
+        with:
+          version: v0.14.0
+      - name: Login to CUE registry
+        run: cue login --token=${{ secrets.CUE_REGISTRY_TOKEN }}
+      - name: Vet
+        run: |-
+          ${{ matrix.eval.command }}
+permissions: read-all
